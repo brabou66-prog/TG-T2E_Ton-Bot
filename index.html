@@ -9,7 +9,10 @@
         body {
             margin: 0;
             padding: 0;
-            background: linear-gradient(135deg, #0e1621, #17212b);
+            /* وضع صورة العملة الرقمية كخلفية شفافة مكررة بشكل جمالي مع طابع الكريبتو الداكن */
+            background: linear-gradient(rgba(14, 22, 33, 0.85), rgba(23, 33, 43, 0.9)), url('https://ibb.co');
+            background-size: cover;
+            background-position: center;
             color: white;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
@@ -19,46 +22,59 @@
             height: 100vh;
             overflow: hidden;
             user-select: none;
+            -webkit-user-select: none;
         }
         .header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
+            z-index: 10;
         }
         .title {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: bold;
             color: #2ec4b6;
-            text-shadow: 0 0 10px rgba(46, 196, 182, 0.5);
+            text-shadow: 0 0 15px rgba(46, 196, 182, 0.7);
         }
         .score-container {
-            font-size: 48px;
+            font-size: 56px;
             font-weight: bold;
-            margin: 20px 0;
+            margin: 15px 0;
             color: #ffffff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            z-index: 10;
         }
+        /* تعديل الزر ليتفاعل برمجياً وبشكل فوري مع لمس شاشة الهاتف وتأثيرات الحركة الضوئية */
         .coin-button {
-            width: 200px;
-            height: 200px;
+            width: 210px;
+            height: 210px;
             border-radius: 50%;
             background: radial-gradient(circle, #e63946, #b7091a);
-            box-shadow: 0 0 30px rgba(230, 57, 70, 0.6), inset 0 0 20px rgba(255,255,255,0.3);
+            box-shadow: 0 0 35px rgba(230, 57, 70, 0.7), inset 0 0 20px rgba(255,255,255,0.4);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: transform 0.1s ease;
+            transition: transform 0.05s ease;
             border: 5px solid #2a9d8f;
+            z-index: 10;
+            touch-action: manipulation;
         }
         .coin-button:active {
-            transform: scale(0.95);
+            transform: scale(0.92);
         }
         .coin-icon {
-            font-size: 80px;
+            font-size: 85px;
+            pointer-events: none;
         }
         .footer {
-            margin-top: 30px;
-            font-size: 14px;
-            color: #8b9bb4;
+            margin-top: 35px;
+            font-size: 15px;
+            color: #e0e6ed;
+            font-weight: 500;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 5px 15px;
+            border-radius: 20px;
+            z-index: 10;
         }
     </style>
 </head>
@@ -66,21 +82,24 @@
 
     <div class="header">
         <div class="title">Atlas Token ($ATL)</div>
-        <div style="color: #8b9bb4; margin-top: 5px;">انقر على الأسد للتجميع</div>
+        <div style="color: #8b9bb4; margin-top: 5px; font-size: 16px;">انقر على الأسد للتجميع</div>
     </div>
 
     <div class="score-container" id="score">0</div>
 
-    <div class="coin-button" id="clickBtn">
+    <!-- زر تفاعلي مدمج الأحداث لتغطية نقرات الهواتف بلمس الشاشة الفوري -->
+    <div class="coin-button" id="clickBtn" ontouchstart="" onclick="">
         <span class="coin-icon">🦁</span>
     </div>
 
-    <div class="footer">استمر في دعم أسود الأطلس!</div>
+    <div class="footer">استمر في دعم أسود الأطلس! 🇲🇦</div>
 
     <script>
-        // تفعيل ميزات تليجرام المصغرة وتوسيع الشاشة
         const tg = window.Telegram.WebApp;
-        tg.expand();
+        if (tg) {
+            tg.expand();
+            if (tg.ready) tg.ready();
+        }
 
         let count = parseInt(localStorage.getItem('atl_score')) || 0;
         const scoreDisplay = document.getElementById('score');
@@ -88,16 +107,21 @@
 
         scoreDisplay.textContent = count;
 
-        clickBtn.addEventListener('click', () => {
+        // وظيفة زيادة العداد مع معالجة حماية النقرات المتعددة والمحاكاة التلقائية للهواتف
+        function doClick(e) {
+            if (e) e.preventDefault();
             count++;
             scoreDisplay.textContent = count;
             localStorage.setItem('atl_score', count);
             
-            // اهتزاز خفيف للهاتف عند النقر (إذا كان مدعوماً)
-            if (tg.HapticFeedback) {
+            if (tg && tg.HapticFeedback) {
                 tg.HapticFeedback.impactOccurred('light');
             }
-        });
+        }
+
+        // ربط الحدثين معاً (اللمس للهواتف والنقر للمتصفحات العادية) لضمان العمل 100%
+        clickBtn.addEventListener('touchstart', doClick, { passive: false });
+        clickBtn.addEventListener('click', doClick);
     </script>
 </body>
 </html>
