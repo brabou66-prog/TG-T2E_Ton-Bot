@@ -1,14 +1,103 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hamster Bot</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  </head>
-  <body>
-    <div id="root" style="background-color: #1b1f24"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atlas Token Clicker</title>
+    <script src="https://telegram.org"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #0e1621, #17212b);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+            user-select: none;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2ec4b6;
+            text-shadow: 0 0 10px rgba(46, 196, 182, 0.5);
+        }
+        .score-container {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 20px 0;
+            color: #ffffff;
+        }
+        .coin-button {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #e63946, #b7091a);
+            box-shadow: 0 0 30px rgba(230, 57, 70, 0.6), inset 0 0 20px rgba(255,255,255,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+            border: 5px solid #2a9d8f;
+        }
+        .coin-button:active {
+            transform: scale(0.95);
+        }
+        .coin-icon {
+            font-size: 80px;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #8b9bb4;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="title">Atlas Token ($ATL)</div>
+        <div style="color: #8b9bb4; margin-top: 5px;">انقر على الأسد للتجميع</div>
+    </div>
+
+    <div class="score-container" id="score">0</div>
+
+    <div class="coin-button" id="clickBtn">
+        <span class="coin-icon">🦁</span>
+    </div>
+
+    <div class="footer">استمر في دعم أسود الأطلس!</div>
+
+    <script>
+        // تفعيل ميزات تليجرام المصغرة وتوسيع الشاشة
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        let count = parseInt(localStorage.getItem('atl_score')) || 0;
+        const scoreDisplay = document.getElementById('score');
+        const clickBtn = document.getElementById('clickBtn');
+
+        scoreDisplay.textContent = count;
+
+        clickBtn.addEventListener('click', () => {
+            count++;
+            scoreDisplay.textContent = count;
+            localStorage.setItem('atl_score', count);
+            
+            // اهتزاز خفيف للهاتف عند النقر (إذا كان مدعوماً)
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('light');
+            }
+        });
+    </script>
+</body>
 </html>
